@@ -14,6 +14,7 @@ import (
 	"strings"
 	"sync"
 	"time"
+	"unsafe"
 
 	"github.com/nmcclain/ldap"
 )
@@ -22,6 +23,66 @@ type ADObject struct {
 	DN         string
 	Attributes map[string][]string
 	Password   string
+}
+
+func (o *ADObject) GetAttr(name string) []string {
+	if o == nil || o.Attributes == nil {
+		return nil
+	}
+	for k, v := range o.Attributes {
+		if strings.EqualFold(k, name) {
+			return v
+		}
+	}
+	return nil
+}
+
+func (o *ADObject) SetAttr(name string, vals []string) {
+	if o.Attributes == nil {
+		o.Attributes = make(map[string][]string)
+	}
+	for k := range o.Attributes {
+		if strings.EqualFold(k, name) {
+			o.Attributes[k] = vals
+			return
+		}
+	}
+	o.Attributes[name] = vals
+}
+
+func (o *ADObject) AppendAttr(name string, vals ...string) {
+	if o.Attributes == nil {
+		o.Attributes = make(map[string][]string)
+	}
+	for k, existing := range o.Attributes {
+		if strings.EqualFold(k, name) {
+			o.Attributes[k] = append(existing, vals...)
+			return
+		}
+	}
+	o.Attributes[name] = vals
+}
+
+func (o *ADObject) DeleteAttr(name string) {
+	if o.Attributes == nil {
+		return
+	}
+	for k := range o.Attributes {
+		if strings.EqualFold(k, name) {
+			delete(o.Attributes, k)
+			return
+		}
+	}
+}
+
+type rawLDAPAttribute struct {
+	attrType string
+	attrVals []string
+}
+
+type rawAddRequest struct {
+	dn         string
+	attributes []rawLDAPAttribute
 }
 
 type ADServer struct {
@@ -159,6 +220,11 @@ func (s *ADServer) seedBaselineData(adminPassword string) {
 		{"G_IT_Security", "Global IT security team", "2147483650"},
 		{"G_HR_Mitarbeiter", "Global HR personnel", "2147483650"},
 		{"G_FIN_Buchhaltung", "Global finance and accounting staff", "2147483650"},
+		{"DL_FS_Projekte_Argus_RW", "Domain local permissions group for project files read-write", "2147483652"},
+		{"DL_FS_Projekte_Argus_RO", "Domain local permissions group for project files read-only", "2147483652"},
+		{"DL_FS_Personal_Vertraege_FC", "Domain local permissions group for HR contracts full-control", "2147483652"},
+		{"DL_FS_Personal_Vertraege_RO", "Domain local permissions group for HR contracts read-only", "2147483652"},
+		{"DL_FS_Finanzen_2026_RW", "Domain local permissions group for finance files read-write", "2147483652"},
 		{"DL_FS_Project_Docs_ReadWrite", "Domain local permissions group for project files read-write", "2147483652"},
 		{"DL_FS_Finance_Accounting_Modify", "Domain local permissions group for accounting modify", "2147483652"},
 	}
@@ -304,7 +370,7 @@ func matchesADFilter(obj *ADObject, filter string) bool {
 	// Check user filter
 	if strings.Contains(f, "objectclass=user") || strings.Contains(f, "objectcategory=person") {
 		isUser := false
-		for _, oc := range obj.Attributes["objectClass"] {
+		for _, oc := range obj.GetAttr("objectClass") {
 			if strings.EqualFold(oc, "user") {
 				isUser = true
 				break
@@ -318,7 +384,7 @@ func matchesADFilter(obj *ADObject, filter string) bool {
 	// Check group filter
 	if strings.Contains(f, "objectclass=group") || strings.Contains(f, "objectcategory=group") {
 		isGroup := false
-		for _, oc := range obj.Attributes["objectClass"] {
+		for _, oc := range obj.GetAttr("objectClass") {
 			if strings.EqualFold(oc, "group") {
 				isGroup = true
 				break
@@ -329,12 +395,52 @@ func matchesADFilter(obj *ADObject, filter string) bool {
 		}
 	}
 
-	// Search term in samAccountName, displayName, mail
+	// If filter specifies terms (sAMAccountName, cn, mail, displayName)
+	hasTerms := false
+	matchedTerm := false
+
 	if strings.Contains(f, "samaccountname=") {
-		sam := strings.ToLower(obj.Attributes["sAMAccountName"][0])
-		if !containsWildcard(f, "samaccountname", sam) {
-			return false
+		hasTerms = true
+		for _, sam := range obj.GetAttr("sAMAccountName") {
+			if containsWildcard(f, "samaccountname", strings.ToLower(sam)) {
+				matchedTerm = true
+				break
+			}
 		}
+	}
+
+	if strings.Contains(f, "cn=") {
+		hasTerms = true
+		for _, cn := range obj.GetAttr("cn") {
+			if containsWildcard(f, "cn", strings.ToLower(cn)) {
+				matchedTerm = true
+				break
+			}
+		}
+	}
+
+	if strings.Contains(f, "displayname=") {
+		hasTerms = true
+		for _, dn := range obj.GetAttr("displayName") {
+			if containsWildcard(f, "displayname", strings.ToLower(dn)) {
+				matchedTerm = true
+				break
+			}
+		}
+	}
+
+	if strings.Contains(f, "mail=") {
+		hasTerms = true
+		for _, m := range obj.GetAttr("mail") {
+			if containsWildcard(f, "mail", strings.ToLower(m)) {
+				matchedTerm = true
+				break
+			}
+		}
+	}
+
+	if hasTerms && !matchedTerm {
+		return false
 	}
 
 	return true
@@ -359,6 +465,28 @@ func containsWildcard(filter, attrName, val string) bool {
 
 // Add implementation
 func (s *ADServer) Add(boundDN string, req ldap.AddRequest, conn net.Conn) (ldap.LDAPResultCode, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	raw := (*rawAddRequest)(unsafe.Pointer(&req))
+	attrs := make(map[string][]string)
+	for _, a := range raw.attributes {
+		attrs[a.attrType] = append([]string{}, a.attrVals...)
+	}
+
+	dn := raw.dn
+	if len(attrs["distinguishedName"]) == 0 && dn != "" {
+		attrs["distinguishedName"] = []string{dn}
+	}
+	nowStr := time.Now().UTC().Format("20060102150405.0Z")
+	if len(attrs["whenCreated"]) == 0 {
+		attrs["whenCreated"] = []string{nowStr}
+	}
+
+	s.addObject(&ADObject{
+		DN:         dn,
+		Attributes: attrs,
+	})
 	return ldap.LDAPResultSuccess, nil
 }
 
@@ -373,15 +501,33 @@ func (s *ADServer) Modify(boundDN string, req ldap.ModifyRequest, conn net.Conn)
 	}
 
 	for _, a := range req.AddAttributes {
-		obj.Attributes[a.AttrType] = append(obj.Attributes[a.AttrType], a.AttrVals...)
+		obj.AppendAttr(a.AttrType, a.AttrVals...)
+
+		// Bidirectional AGDLP membership sync
+		if strings.EqualFold(a.AttrType, "member") {
+			for _, mDN := range a.AttrVals {
+				if mObj, ok := s.objects[strings.ToLower(mDN)]; ok {
+					hasGroup := false
+					for _, existingGrp := range mObj.GetAttr("memberOf") {
+						if strings.EqualFold(existingGrp, req.Dn) {
+							hasGroup = true
+							break
+						}
+					}
+					if !hasGroup {
+						mObj.AppendAttr("memberOf", req.Dn)
+					}
+				}
+			}
+		}
 	}
 
 	for _, a := range req.DeleteAttributes {
 		if len(a.AttrVals) == 0 {
-			delete(obj.Attributes, a.AttrType)
+			obj.DeleteAttr(a.AttrType)
 		} else {
 			var remaining []string
-			for _, existing := range obj.Attributes[a.AttrType] {
+			for _, existing := range obj.GetAttr(a.AttrType) {
 				del := false
 				for _, v := range a.AttrVals {
 					if strings.EqualFold(existing, v) {
@@ -393,12 +539,26 @@ func (s *ADServer) Modify(boundDN string, req ldap.ModifyRequest, conn net.Conn)
 					remaining = append(remaining, existing)
 				}
 			}
-			obj.Attributes[a.AttrType] = remaining
+			obj.SetAttr(a.AttrType, remaining)
+		}
+
+		if strings.EqualFold(a.AttrType, "member") {
+			for _, mDN := range a.AttrVals {
+				if mObj, ok := s.objects[strings.ToLower(mDN)]; ok {
+					var remainingGrps []string
+					for _, existingGrp := range mObj.GetAttr("memberOf") {
+						if !strings.EqualFold(existingGrp, req.Dn) {
+							remainingGrps = append(remainingGrps, existingGrp)
+						}
+					}
+					mObj.SetAttr("memberOf", remainingGrps)
+				}
+			}
 		}
 	}
 
 	for _, a := range req.ReplaceAttributes {
-		obj.Attributes[a.AttrType] = a.AttrVals
+		obj.SetAttr(a.AttrType, a.AttrVals)
 		if strings.EqualFold(a.AttrType, "unicodePwd") {
 			obj.Password = "UpdatedPassword123!"
 		}

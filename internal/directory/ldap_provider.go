@@ -213,7 +213,18 @@ func (p *LDAPProvider) CreateUser(input CreateADUserInput) (*ADUser, error) {
 	}
 	userDN := fmt.Sprintf("CN=%s,%s", ldap.EscapeDN(dispName), container)
 
-	upn := fmt.Sprintf("%s@%s", input.SAMAccountName, strings.ReplaceAll(strings.ToLower(p.cfg.BaseDN), "dc=", "."))
+	var domainParts []string
+	for _, part := range strings.Split(p.cfg.BaseDN, ",") {
+		part = strings.TrimSpace(part)
+		if strings.HasPrefix(strings.ToLower(part), "dc=") {
+			domainParts = append(domainParts, part[3:])
+		}
+	}
+	domain := strings.Join(domainParts, ".")
+	if domain == "" {
+		domain = "corp.local"
+	}
+	upn := fmt.Sprintf("%s@%s", input.SAMAccountName, domain)
 
 	addReq := ldap.NewAddRequest(userDN, nil)
 	addReq.Attribute("objectClass", []string{"top", "person", "organizationalPerson", "user"})
