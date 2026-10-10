@@ -1,0 +1,17 @@
+# Binaries
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# SQLite Database & Runtime data
+data/
+*.db
+*.db-wal
+*.db-shm
+
+# IDE & OS
+.DS_Store
+.idea/
+.vscode/

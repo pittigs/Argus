@@ -1,0 +1,2298 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARGUS | Enterprise IAM & Tamper-Evident Audit Matrix</title>
+  <meta name="description" content="Moderne Identity & Access Management Plattform mit unveränderlichem, kryptografisch verifizierbarem Audit-Log und feingranularem RBAC.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Background Ambient Glows -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <!-- Main Container -->
+  <div id="app" class="app-layout">
+
+    <!-- Top Navigation Bar -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            <circle cx="12" cy="11" r="3"></circle>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">ARGUS</span>
+          <span class="brand-subtitle">IAM & AUDIT MATRIX</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" id="mainNav">
+        <button class="nav-tab active" data-tab="dashboard" id="tabBtnDashboard">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          Dashboard
+        </button>
+        <button class="nav-tab" data-tab="audit" id="tabBtnAudit">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          Audit-Log & Compliance
+        </button>
+        <button class="nav-tab" data-tab="users" id="tabBtnUsers">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+          Benutzer & Identitäten
+        </button>
+        <button class="nav-tab" data-tab="roles" id="tabBtnRoles">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          Rollen & RBAC
+        </button>
+        <button class="nav-tab" data-tab="directory" id="tabBtnDirectory">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+          AD & Samba (AGDLP)
+        </button>
+        <button class="nav-tab" data-tab="lifecycle" id="tabBtnLifecycle">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+          HR & Lifecycle
+        </button>
+        <button class="nav-tab" data-tab="api" id="tabBtnApi">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+          REST API Docs
+        </button>
+        <button class="nav-tab" data-tab="enterprise" id="tabBtnEnterprise">
+          <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          Enterprise Suite (40)
+        </button>
+      </nav>
+
+      <!-- User Profile & Status Header -->
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm key-shortcut" id="btnOpenCmdPalette" title="Schnellsuche öffnen (Strg + K)">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <span>Suche</span>
+          <kbd>Ctrl</kbd><kbd>K</kbd>
+        </button>
+
+        <button class="btn btn-ghost btn-sm" id="btnOpenApprovalsModal" title="Vier-Augen-Freigaben (Dual Control)">
+          <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+          <span>Approvals</span>
+          <span class="badge badge-amber ml-1" id="approvalsCountBadge" style="display: none; padding: 1px 6px; font-size: 11px;">0</span>
+        </button>
+
+        <div class="live-stream-badge" id="liveStreamStatus" title="Server-Sent Events Echtzeit-Stream aktiv">
+          <span class="live-pulse-dot"></span>
+          <span class="live-badge-text">LIVE</span>
+        </div>
+
+        <button class="icon-btn theme-toggle-btn" id="themeToggleBtn" title="Theme umschalten (Dark / Light)">
+          <svg id="themeIcon" viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+
+        <div class="chain-badge" id="headerChainStatus" title="Kryptografische SHA-256 Kette aktiv">
+          <span class="status-pulse-dot"></span>
+          <span class="chain-badge-text">CHAIN VERIFIED</span>
+        </div>
+
+        <div class="user-menu" id="userMenu">
+          <div class="user-avatar" id="headerAvatar">AD</div>
+          <div class="user-info">
+            <span class="user-name" id="headerUsername">Admin</span>
+            <span class="user-role-badge" id="headerRoleBadge">SuperAdmin</span>
+          </div>
+          <button class="icon-btn" id="logoutBtn" title="Abmelden">
+            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Body Area -->
+    <main class="main-content">
+
+      <!-- ================= SECTION: DASHBOARD ================= -->
+      <section id="sectionDashboard" class="tab-pane active">
+        <div class="dashboard-header">
+          <div>
+            <h1 class="page-title">Sicherheits- & IAM Übersicht</h1>
+            <p class="page-desc">Echtzeit-Metriken für Identitäten, Berechtigungen und kryptografische Audit-Kette.</p>
+          </div>
+          <div class="dashboard-actions">
+            <button class="btn btn-primary" id="btnQuickCreateUser">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              Neuer Benutzer
+            </button>
+            <button class="btn btn-secondary" id="btnQuickVerify">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Hash-Kette prüfen
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper cyan">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+            </div>
+            <div class="stat-data">
+              <span class="stat-label">Gesamte Identitäten</span>
+              <div class="stat-val-group">
+                <span class="stat-number" id="statTotalUsers">0</span>
+                <span class="stat-subtext" id="statActiveUsers">0 aktiv</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper indigo">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div class="stat-data">
+              <span class="stat-label">Rollen & RBAC</span>
+              <div class="stat-val-group">
+                <span class="stat-number" id="statTotalRoles">0</span>
+                <span class="stat-subtext" id="statTotalPerms">0 Berechtigungen</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper emerald">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+            </div>
+            <div class="stat-data">
+              <span class="stat-label">Unveränderte Audit-Einträge</span>
+              <div class="stat-val-group">
+                <span class="stat-number" id="statTotalAudit">0</span>
+                <span class="stat-subtext text-emerald">Revisionssicher</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper amber">
+              <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="stat-data">
+              <span class="stat-label">Aktivitäten (24 Std.)</span>
+              <div class="stat-val-group">
+                <span class="stat-number" id="statRecentLogins">0</span>
+                <span class="stat-subtext text-warning" id="statSecurityAlerts">0 Alerts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Split Grid: Live Audit Ticker + Security Policy Status -->
+        <div class="dashboard-split">
+          <!-- Recent Audit Stream -->
+          <div class="glass-card">
+            <div class="card-head">
+              <div class="card-head-title">
+                <span class="status-pulse-dot"></span>
+                <span>Echtzeit-Sicherheitsereignisse</span>
+              </div>
+              <button class="btn btn-ghost btn-sm" id="btnGoToAudit">Vollständiges Audit-Log &rarr;</button>
+            </div>
+            <div class="card-body">
+              <div class="recent-events-list" id="recentEventsList">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- RBAC Matrix & Governance Summary -->
+          <div class="glass-card">
+            <div class="card-head">
+              <div class="card-head-title">
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                <span>Compliance & Audit-Integrität</span>
+              </div>
+              <button class="btn btn-ghost btn-sm" id="btnVerifyChainModal">Kette prüfen</button>
+            </div>
+            <div class="card-body">
+              <div class="compliance-banner">
+                <div class="compliance-icon">
+                  <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <div>
+                  <h4 class="compliance-title">SHA-256 Hash Chain Sealed</h4>
+                  <p class="compliance-desc">Jeder Zustandwechsel wird mit dem Hash des vorherigen Eintrags verkettet. Nachträgliche Manipulationen an der Datenbank brechen die kryptografische Kette unweigerlich.</p>
+                </div>
+              </div>
+
+              <div class="security-checklist">
+                <div class="check-item active">
+                  <span class="check-icon">&#10003;</span>
+                  <span>Unveränderbares Audit-Trail (Append-Only WAL)</span>
+                </div>
+                <div class="check-item active">
+                  <span class="check-icon">&#10003;</span>
+                  <span>Vorher/Nachher-Diffs für jede Berechtigungs- und Benutzeränderung</span>
+                </div>
+                <div class="check-item active">
+                  <span class="check-icon">&#10003;</span>
+                  <span>Bcrypt Password Salting & Revisionssichere Sitzungen</span>
+                </div>
+                <div class="check-item active">
+                  <span class="check-icon">&#10003;</span>
+                  <span>Feingranulares RBAC (Principle of Least Privilege)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION: AUDIT LOG ================= -->
+      <section id="sectionAudit" class="tab-pane">
+        <div class="section-topbar">
+          <div>
+            <h1 class="page-title">Unveränderliches Audit-Log & Compliance</h1>
+            <p class="page-desc">Vollständige Historie aller Identitäts- und Berechtigungsänderungen mit kryptografischem Integritätsnachweis.</p>
+          </div>
+          <div class="section-actions">
+            <button class="btn btn-secondary" id="btnExportCSV">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              CSV Export
+            </button>
+            <button class="btn btn-secondary" id="btnExportJSON">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              JSON Export
+            </button>
+            <button class="btn btn-accent" id="btnVerifyChainMain">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Kette verifizieren
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-bar glass-card">
+          <div class="filter-input-group search-group">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="auditSearchInput" placeholder="Suche nach Benutzer, Aktion, Ressource, Grund..." />
+          </div>
+
+          <div class="filter-input-group">
+            <select id="auditActionFilter">
+              <option value="">Alle Aktionen</option>
+              <option value="auth.login">auth.login</option>
+              <option value="auth.login_failed">auth.login_failed</option>
+              <option value="auth.logout">auth.logout</option>
+              <option value="user.create">user.create</option>
+              <option value="user.update">user.update</option>
+              <option value="user.delete">user.delete</option>
+              <option value="role.create">role.create</option>
+              <option value="role.update">role.update</option>
+              <option value="role.delete">role.delete</option>
+              <option value="audit.export">audit.export</option>
+            </select>
+          </div>
+
+          <div class="filter-input-group">
+            <select id="auditStatusFilter">
+              <option value="">Alle Status</option>
+              <option value="SUCCESS">SUCCESS</option>
+              <option value="FAILURE">FAILURE</option>
+            </select>
+          </div>
+
+          <button class="btn btn-ghost" id="btnResetAuditFilter">Zurücksetzen</button>
+        </div>
+
+        <!-- Audit Table -->
+        <div class="glass-card table-card">
+          <div class="table-responsive">
+            <table class="data-table" id="auditTable">
+              <thead>
+                <tr>
+                  <th style="width: 70px;">Seq</th>
+                  <th style="width: 170px;">Zeitstempel (UTC)</th>
+                  <th>Akteur</th>
+                  <th>Aktion</th>
+                  <th>Ziel-Ressource</th>
+                  <th style="width: 90px;">Status</th>
+                  <th>Hash-Kette (SHA-256)</th>
+                  <th style="width: 100px; text-align: right;">Diff & Details</th>
+                </tr>
+              </thead>
+              <tbody id="auditTableBody">
+                <!-- Dynamic Rows -->
+              </tbody>
+            </table>
+          </div>
+          <div class="table-footer">
+            <span class="table-info" id="auditCountInfo">Einträge werden geladen...</span>
+            <div class="pagination-controls" id="auditPagination">
+              <button class="btn btn-ghost btn-sm" id="auditPrevBtn">&larr; Zurück</button>
+              <span id="auditPageIndicator">Seite 1</span>
+              <button class="btn btn-ghost btn-sm" id="auditNextBtn">Weiter &rarr;</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION: USERS ================= -->
+      <section id="sectionUsers" class="tab-pane">
+        <div class="section-topbar">
+          <div>
+            <h1 class="page-title">Identitäts- & Benutzerverwaltung</h1>
+            <p class="page-desc">Verwalten von Accounts, Rollenzuweisungen und Benutzerstatus.</p>
+          </div>
+          <button class="btn btn-primary" id="btnCreateUser">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Neuer Benutzer
+          </button>
+        </div>
+
+        <div class="glass-card table-card">
+          <div class="table-responsive">
+            <table class="data-table" id="usersTable">
+              <thead>
+                <tr>
+                  <th>Benutzer</th>
+                  <th>E-Mail</th>
+                  <th>Status</th>
+                  <th>Zugewiesene Rollen</th>
+                  <th>Letzter Login</th>
+                  <th>Erstellt am</th>
+                  <th style="text-align: right;">Aktionen</th>
+                </tr>
+              </thead>
+              <tbody id="usersTableBody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION: ROLES & RBAC ================= -->
+      <section id="sectionRoles" class="tab-pane">
+        <div class="section-topbar">
+          <div>
+            <h1 class="page-title">Rollen & RBAC Berechtigungsmatrix</h1>
+            <p class="page-desc">Feingranulare Berechtigungsdefinition nach dem Least-Privilege-Prinzip.</p>
+          </div>
+          <button class="btn btn-primary" id="btnCreateRole">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Neue Rolle erstellen
+          </button>
+        </div>
+
+        <!-- Role Cards Grid -->
+        <div class="roles-grid" id="rolesGrid">
+          <!-- Injected via JS -->
+        </div>
+
+        <!-- Granular Permissions Reference Matrix -->
+        <div class="glass-card" style="margin-top: 2rem;">
+          <div class="card-head">
+            <div class="card-head-title">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              <span>Verfügbare System-Berechtigungen</span>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="permissions-list" id="permissionsReferenceList">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION: API DOCS ================= -->
+      <section id="sectionApi" class="tab-pane">
+        <div class="section-topbar">
+          <div>
+            <h1 class="page-title">REST API & Integrations-Dokumentation</h1>
+            <p class="page-desc">Kompakte REST-Endpunkte für Automatisierung, CI/CD und Drittanbieter-Anbindungen.</p>
+          </div>
+        </div>
+
+        <div class="api-docs-container">
+          <div class="glass-card api-card">
+            <h3>Authentifizierung & Sessions</h3>
+            <p class="api-card-desc">Sitzungen können per Cookie oder Bearer Token im Header autorisiert werden: <code>Authorization: Bearer &lt;token&gt;</code>.</p>
+            <div class="endpoint-block">
+              <div class="endpoint-line"><span class="badge badge-post">POST</span> <code>/api/auth/login</code></div>
+              <p>Authentifiziert Benutzer via JSON <code>{"username":"...", "password":"..."}</code></p>
+            </div>
+            <div class="endpoint-block">
+              <div class="endpoint-line"><span class="badge badge-get">GET</span> <code>/api/auth/me</code></div>
+              <p>Liefert aktives Benutzerprofil, Rollen und Berechtigungscodes</p>
+            </div>
+            <div class="endpoint-block">
+              <div class="endpoint-line"><span class="badge badge-post">POST</span> <code>/api/auth/logout</code></div>
+              <p>Beendet die aktuelle Sitzung und protokolliert Abmeldung im Audit-Log</p>
+            </div>
+          </div>
+
+          <div class="glass-card api-card">
+            <h3>Audit-Log & Hash-Kette</h3>
+            <p class="api-card-desc">Revisionssichere Abfrage und Export für Compliance-Tools.</p>
+            <div class="endpoint-block">
+              <div class="endpoint-line"><span class="badge badge-get">GET</span> <code>/api/audit?limit=100&offset=0&search=...</code></div>
+              <p>Filterbare Audit-Ereignisse mit Vorher/Nachher-Snapshots</p>
+            </div>
+            <div class="endpoint-block">
+              <div class="endpoint-line"><span class="badge badge-get">GET</span> <code>/api/audit/verify</code></div>
+              <p>Führt die kryptografische SHA-256 Validierung über alle Kettenglieder durch</p>
+            </div>
+            <div class="endpoint-block">
+              <div class="endpoint-line"><span class="badge badge-get">GET</span> <code>/api/audit/export?format=csv|json</code></div>
+              <p>Vollständiger Export der Audit-Logs mit kryptografischen Prüfsummen</p>
+            </div>
+          </div>
+
+          <div class="glass-card api-card">
+            <h3>Benutzer & Rollen (RBAC)</h3>
+            <div class="endpoint-block">
+              <div class="endpoint-line"><span class="badge badge-get">GET</span> <code>/api/users</code> &bull; <span class="badge badge-post">POST</span> <code>/api/users</code></div>
+              <p>Benutzer auflisten oder neuen Benutzer anlegen</p>
+            </div>
+            <div class="endpoint-block">
+              <div class="endpoint-line"><span class="badge badge-put">PUT</span> <code>/api/users/{id}</code> &bull; <span class="badge badge-delete">DELETE</span> <code>/api/users/{id}</code></div>
+              <p>Benutzerdaten, Status und Rollen aktualisieren oder entfernen</p>
+            </div>
+            <div class="endpoint-block">
+              <div class="endpoint-line"><span class="badge badge-get">GET</span> <code>/api/roles</code> &bull; <span class="badge badge-post">POST</span> <code>/api/roles</code></div>
+              <p>Rollen abrufen, neu erstellen oder anpassen</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= SECTION: ENTERPRISE SUITE (40 IMPROVEMENTS) ================= -->
+      <section id="sectionEnterprise" class="tab-pane">
+        <div class="section-topbar">
+          <div>
+            <h1 class="page-title">Enterprise Matrix &amp; Zero-Trust Suite</h1>
+            <p class="page-desc">40 modulare Enterprise-Erweiterungen für maximale Kryptografie, Hochverfügbarkeit, PAM-Governance und NIS-2 / ISO 27001 Compliance.</p>
+          </div>
+          <div class="actions">
+            <button class="btn btn-primary btn-sm" id="btnRefreshEnterpriseData">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M23 4v6h-6"></path><path d="M1 20v-6h6"></path><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+              Enterprise-Status aktualisieren
+            </button>
+          </div>
+        </div>
+
+        <!-- 8 Enterprise Domains Grid -->
+        <div class="enterprise-grid">
+
+          <!-- 1. Zero-Trust Cryptography -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <span class="badge badge-cyan">Säule I</span>
+                <h3 class="card-title">Kryptografie &amp; Zero-Trust Audit</h3>
+              </div>
+              <span class="badge badge-emerald">SHA-256 / Ed25519</span>
+            </div>
+            <p class="text-dim text-xs mt-1">Merkle-Trees, Hardware-Signierung, PQC Hybrid, WORM-Ledger &amp; Envelope-Verschlüsselung.</p>
+            <div class="mt-3 space-y-2 text-xs">
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>1. Merkle-Root Anchoring:</span>
+                <button class="btn btn-xs btn-secondary" id="btnTestMerkle">Root berechnen</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>2. Ed25519 &amp; PQC Dilithium Signer:</span>
+                <button class="btn btn-xs btn-secondary" id="btnTestSignBlock">Block signieren</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>3. WORM Immutable Ledger:</span>
+                <span class="badge badge-emerald" id="badgeWORMStatus">Aktiv (SEC 17a-4)</span>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>4. AES-256-GCM Envelope Encryption:</span>
+                <button class="btn btn-xs btn-secondary" id="btnTestEnvelope">Demo PII Encrypt</button>
+              </div>
+            </div>
+            <div id="cryptoResultBox" class="mt-3 p-2 bg-darkest rounded text-xs font-mono text-cyan truncate" style="display:none;"></div>
+          </div>
+
+          <!-- 2. Advanced Auth & MFA -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <span class="badge badge-cyan">Säule II</span>
+                <h3 class="card-title">Authentifizierung, MFA &amp; SSO</h3>
+              </div>
+              <span class="badge badge-emerald">FIDO2 / TOTP</span>
+            </div>
+            <p class="text-dim text-xs mt-1">FIDO2 Passkeys, RFC 6238 TOTP, SSO OIDC/SAML, Risikobasierter Login &amp; HIBP-Check.</p>
+            <div class="mt-3 space-y-2 text-xs">
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>6. WebAuthn / Passkeys:</span>
+                <button class="btn btn-xs btn-secondary" id="btnTestWebAuthn">Challenge anfordern</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>7. TOTP 2FA Einrichtung &amp; Codes:</span>
+                <button class="btn btn-xs btn-secondary" id="btnTestTOTP">Setup QR &amp; Secret</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>8. SSO Federation (Entra ID, Okta):</span>
+                <span class="badge badge-cyan">OIDC Bereit</span>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>9. Impossible Travel Risikosimulation:</span>
+                <button class="btn btn-xs btn-amber" id="btnTestRisk">Geo-Sprung prüfen</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>10. HaveIBeenPwned Check (k-Anonymity):</span>
+                <button class="btn btn-xs btn-secondary" id="btnTestHIBP">Passwort testen</button>
+              </div>
+            </div>
+            <div id="authResultBox" class="mt-3 p-2 bg-darkest rounded text-xs font-mono text-amber truncate" style="display:none;"></div>
+          </div>
+
+          <!-- 3. Active Directory Extended -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <span class="badge badge-cyan">Säule III</span>
+                <h3 class="card-title">Active Directory &amp; Multi-Forest</h3>
+              </div>
+              <span class="badge badge-emerald">AGDLP / FGPP</span>
+            </div>
+            <p class="text-dim text-xs mt-1">Forest Trusts, Password Settings Objects (PSO), gMSA, Papierkorb &amp; Delta-Sync.</p>
+            <div class="mt-3 space-y-2 text-xs">
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>11. Multi-Forest Domains:</span>
+                <span class="text-emerald font-semibold" id="activeDomainLabel">corp.local</span>
+                <button class="btn btn-xs btn-secondary" id="btnSwitchForestDomain">Wechseln</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>12. Fine-Grained Password Policies:</span>
+                <button class="btn btn-xs btn-secondary" id="btnListPSOs">PSO Richtlinien</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>13. gMSA Accounts &amp; SPN Rotation:</span>
+                <button class="btn btn-xs btn-secondary" id="btnRotateGMSA">Passwort rotieren</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>14. AD Recycle Bin &amp; Tombstone:</span>
+                <button class="btn btn-xs btn-secondary" id="btnRestoreDeletedAD">1-Klick Restore</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>15. USNChanged Delta Sync:</span>
+                <span class="badge badge-emerald" id="deltaSyncBadge">IN_SYNC (1,048,576)</span>
+              </div>
+            </div>
+            <div id="adResultBox" class="mt-3 p-2 bg-darkest rounded text-xs font-mono text-cyan truncate" style="display:none;"></div>
+          </div>
+
+          <!-- 4. PAM & JIT Governance -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <span class="badge badge-cyan">Säule IV</span>
+                <h3 class="card-title">Privileged Access &amp; PAM</h3>
+              </div>
+              <span class="badge badge-amber">Dual Control</span>
+            </div>
+            <p class="text-dim text-xs mt-1">Break-Glass Notfallkoffer, Ephemere Secrets, SoD Toxic Pairs &amp; Rezertifizierung.</p>
+            <div class="mt-3 space-y-2 text-xs">
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>16. Break-Glass Notfallkoffer:</span>
+                <button class="btn btn-xs btn-rose" id="btnTriggerBreakGlass">Notfall-Freigabe</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>17. Ephemere Dynamic Secrets (TTL):</span>
+                <button class="btn btn-xs btn-secondary" id="btnIssueEphemeral">SSH Secret</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>18. Segregation of Duties (SoD):</span>
+                <button class="btn btn-xs btn-secondary" id="btnCheckSoD">Konflikt-Scan</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>19. Rezertifizierungs-Kampagne:</span>
+                <button class="btn btn-xs btn-secondary" id="btnListCertCampaigns">Q4 Kampagne</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>20. JIT Session Recording:</span>
+                <button class="btn btn-xs btn-secondary" id="btnViewSessionAudits">Telemetrie Logs</button>
+              </div>
+            </div>
+            <div id="pamResultBox" class="mt-3 p-2 bg-darkest rounded text-xs font-mono text-rose truncate" style="display:none;"></div>
+          </div>
+
+          <!-- 5. Policy-as-Code & ABAC -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <span class="badge badge-cyan">Säule V</span>
+                <h3 class="card-title">Policy-as-Code &amp; Analytics</h3>
+              </div>
+              <span class="badge badge-purple">ABAC / OPA</span>
+            </div>
+            <p class="text-dim text-xs mt-1">Deklaratives Regelwerk, Heuristisches Role-Mining, verwaiste Konten &amp; Shadow-Admins.</p>
+            <div class="mt-3 space-y-2 text-xs">
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>21-22. ABAC Kontext-Evaluierung:</span>
+                <button class="btn btn-xs btn-secondary" id="btnEvaluateABAC">Regel ausführen</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>23. Role-Mining Algorithmus:</span>
+                <button class="btn btn-xs btn-secondary" id="btnRunRoleMining">Rollen generieren</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>24. Orphan &amp; Dormant Account Scan:</span>
+                <button class="btn btn-xs btn-secondary" id="btnScanOrphans">Inaktive Konten</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>25. Shadow-Admin Escalation Graph:</span>
+                <button class="btn btn-xs btn-rose" id="btnAnalyzeShadowAdmins">Angriffspfade</button>
+              </div>
+            </div>
+            <div id="policyResultBox" class="mt-3 p-2 bg-darkest rounded text-xs font-mono text-purple truncate" style="display:none;"></div>
+          </div>
+
+          <!-- 6. Regulatory Compliance -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <span class="badge badge-cyan">Säule VI</span>
+                <h3 class="card-title">Compliance &amp; Forensik</h3>
+              </div>
+              <span class="badge badge-emerald">NIS-2 / ISO 27001</span>
+            </div>
+            <p class="text-dim text-xs mt-1">BSI IT-Grundschutz, NIS-2 Mapping, Time-Travel Diff-Slider, SIEM &amp; DSGVO Shredder.</p>
+            <div class="mt-3 space-y-2 text-xs">
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>26. Framework-Matrix (NIS-2, ISO):</span>
+                <button class="btn btn-xs btn-secondary" id="btnShowComplianceControls">Kontrollen anzeigen</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>27. Forensischer Time-Travel:</span>
+                <button class="btn btn-xs btn-secondary" id="btnRunTimeTravel">Historischer Stand</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>28. SIEM Syslog &amp; ECS Exporter:</span>
+                <button class="btn btn-xs btn-secondary" id="btnExportSIEM">RFC 5424 Versand</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>29. DSGVO Art. 17 Kryptoschreddern:</span>
+                <button class="btn btn-xs btn-rose" id="btnShredGDPR">Schlüssel vernichten</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>30. Signiertes Prüfzertifikat:</span>
+                <button class="btn btn-xs btn-primary" id="btnGetComplianceCert">Zertifikat laden</button>
+              </div>
+            </div>
+            <div id="complianceResultBox" class="mt-3 p-2 bg-darkest rounded text-xs font-mono text-emerald truncate" style="display:none;"></div>
+          </div>
+
+          <!-- 7. High Availability & Cluster -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <span class="badge badge-cyan">Säule VII</span>
+                <h3 class="card-title">Cluster &amp; Skalierbarkeit</h3>
+              </div>
+              <span class="badge badge-emerald">Raft Konsens</span>
+            </div>
+            <p class="text-dim text-xs mt-1">Raft-Konsens Cluster, verteilter In-Memory Cache, Cold Storage Tiering &amp; Replikation.</p>
+            <div class="mt-3 space-y-2 text-xs">
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>31-32. Raft Cluster (3 Nodes):</span>
+                <span class="badge badge-emerald" id="raftLeaderBadge">LEADER (Node 1)</span>
+                <button class="btn btn-xs btn-secondary" id="btnCheckCluster">Knoten prüfen</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>33. Invalidation Cache:</span>
+                <span class="text-emerald font-semibold">99.4% Hit-Rate</span>
+                <button class="btn btn-xs btn-secondary" id="btnCacheStats">Cache Info</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>34. Cold-Storage Tiering:</span>
+                <span class="text-dim">4.8 GB gespart (12 Slices)</span>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>35. Multi-Region Replicas:</span>
+                <span class="text-emerald">Frankfurt (1.2ms)</span>
+                <button class="btn btn-xs btn-secondary" id="btnListReplicas">Replikate</button>
+              </div>
+            </div>
+            <div id="clusterResultBox" class="mt-3 p-2 bg-darkest rounded text-xs font-mono text-cyan truncate" style="display:none;"></div>
+          </div>
+
+          <!-- 8. DevOps & Integration Hub -->
+          <div class="glass-card">
+            <div class="card-header-flex">
+              <div class="card-title-group">
+                <span class="badge badge-cyan">Säule VIII</span>
+                <h3 class="card-title">DevOps, CLI &amp; Integration Hub</h3>
+              </div>
+              <span class="badge badge-cyan">IaC / SCIM</span>
+            </div>
+            <p class="text-dim text-xs mt-1">`argusctl` CLI, Terraform HCL Exporter, SCIM 2.0 HR-Sync, Webhooks &amp; OpenAPI 3.1.</p>
+            <div class="mt-3 space-y-2 text-xs">
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>36. Native CLI (`argusctl`):</span>
+                <span class="badge badge-cyan">Kompiliert (/bin/argusctl)</span>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>37. Terraform / OpenTofu Provider:</span>
+                <button class="btn btn-xs btn-secondary" id="btnExportTerraform">HCL Export</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>38. SCIM 2.0 Endpunkte:</span>
+                <button class="btn btn-xs btn-secondary" id="btnTestSCIM">SCIM Abfrage</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>39. Webhooks (HMAC-SHA256):</span>
+                <button class="btn btn-xs btn-secondary" id="btnTestWebhook">Slack Dispatch</button>
+              </div>
+              <div class="p-2 bg-darker rounded flex justify-between items-center">
+                <span>40. OpenAPI 3.1 &amp; Swagger:</span>
+                <a href="/api/openapi.json" target="_blank" class="btn btn-xs btn-secondary">JSON Schema</a>
+              </div>
+            </div>
+            <div id="devopsResultBox" class="mt-3 p-2 bg-darkest rounded text-xs font-mono text-cyan truncate" style="display:none;"></div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ================= SECTION: DIRECTORY & AGDLP ================= -->
+      <section id="sectionDirectory" class="tab-pane">
+        <div class="dashboard-header">
+          <div>
+            <h1 class="page-title">Active Directory & Samba-AD Verwaltung</h1>
+            <p class="page-desc">Verwaltung von Domänen-Identitäten und revisionssichere Dateiberechtigungen nach dem <strong>AGDLP-Standard</strong>.</p>
+          </div>
+          <div class="dashboard-actions">
+            <div class="dir-view-switch">
+              <button class="btn btn-secondary active" id="btnDirViewUsers">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                Identitäten (AD)
+              </button>
+              <button class="btn btn-secondary" id="btnDirViewAGDLP">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><line x1="12" y1="11" x2="12" y2="17"></line><line x1="9" y1="14" x2="15" y2="14"></line></svg>
+                Dateiberechtigungen (AGDLP)
+              </button>
+              <button class="btn btn-secondary" id="btnDirViewConfig">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                DC Konfiguration
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Connection Status Banner -->
+        <div class="dir-status-banner glass-card" id="dirStatusBanner">
+          <div class="dir-status-indicator">
+            <span class="status-pulse-dot" id="dirStatusPulse"></span>
+            <div class="dir-status-info">
+              <span class="dir-status-title" id="dirStatusTitle">Demo/Mock Active Directory</span>
+              <span class="dir-status-subtitle" id="dirStatusSubtitle">Simulierter DC aktiv &bull; Vollständig bedienbar &bull; Revisions-Audit aktiv</span>
+            </div>
+          </div>
+          <div class="dir-status-actions">
+            <button class="btn btn-secondary btn-sm" id="btnTestConnQuick">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+              Verbindung testen
+            </button>
+          </div>
+        </div>
+
+        <!-- SUBVIEW 1: USERS -->
+        <div id="dirSubViewUsers" class="dir-subview">
+          <div class="toolbar-card glass-card">
+            <div class="toolbar-search">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+              <input type="text" id="adUserSearchInput" placeholder="AD-Benutzer suchen (Name, SAM-Account, Mail)..." />
+            </div>
+            <div class="toolbar-actions">
+              <button class="btn btn-secondary btn-sm" id="btnOpenBulkImportModal" title="Mitarbeiter massenhaft via CSV importieren">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                CSV-Massenimport
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btnOpenJITModal" title="Befristete Berechtigungen verwalten">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                JIT-Zugriff
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btnOpenUserCompareModal">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+                Rechte vergleichen
+              </button>
+              <button class="btn btn-primary btn-sm" id="btnOpenCreateADUserModal">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Neuer AD-Benutzer
+              </button>
+            </div>
+          </div>
+
+          <div class="table-container glass-card">
+            <table class="data-table" id="adUsersTable">
+              <thead>
+                <tr>
+                  <th>sAMAccountName</th>
+                  <th>Vollständiger Name</th>
+                  <th>Abteilung &amp; Titel</th>
+                  <th>E-Mail</th>
+                  <th>Status</th>
+                  <th>Globale Rollengruppen (G_*)</th>
+                  <th class="text-right">Aktionen</th>
+                </tr>
+              </thead>
+              <tbody id="adUsersTableBody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- SUBVIEW 2: AGDLP FILE PERMISSIONS -->
+        <div id="dirSubViewAGDLP" class="dir-subview" style="display: none;">
+          <div class="agdlp-explainer-card glass-card">
+            <div class="agdlp-flow-badge">
+              <span class="agdlp-step-badge"><strong>A</strong>ccounts</span> &rarr;
+              <span class="agdlp-step-badge"><strong>G</strong>lobal Groups</span> &rarr;
+              <span class="agdlp-step-badge"><strong>D</strong>omain <strong>L</strong>ocal</span> &rarr;
+              <span class="agdlp-step-badge"><strong>P</strong>ermissions</span>
+            </div>
+            <p class="agdlp-desc">
+              Dateiberechtigungen werden nach dem <strong>AGDLP-Standard</strong> verwaltet. Ressourcengruppen folgen dem Format <code>DL_FS_&lt;Freigabe&gt;_&lt;Ordner&gt;_&lt;Recht&gt;</code>. Globale Rollen (<code>G_*</code>) erhalten darüber atomare Zugriffsrechte.
+            </p>
+            <div class="agdlp-actions">
+              <button class="btn btn-secondary btn-sm" id="btnOpenAGDLPGraphModal">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><circle cx="18" cy="6" r="3"></circle><circle cx="18" cy="18" r="3"></circle></svg>
+                Visualisierungs-Graph
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btnOpenTemplatesModal">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                Vorlagen-Assistent
+              </button>
+              <button class="btn btn-secondary btn-sm" id="btnOpenComplianceModal">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="m9 12 2 2 4-4"></path></svg>
+                Compliance-Bericht
+              </button>
+              <button class="btn btn-primary btn-sm" id="btnOpenCreateAGDLPModal">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Neue Freigabe anlegen
+              </button>
+            </div>
+          </div>
+
+          <!-- Conflict Warning Banner (if anomalies detected) -->
+          <div id="agdlpConflictAlert" class="conflict-alert glass-card" style="display: none;">
+            <!-- Injected via JS -->
+          </div>
+
+          <!-- AGDLP Matrix Grid -->
+          <div class="agdlp-grid" id="agdlpMatrixGrid">
+            <!-- Injected via JS -->
+          </div>
+        </div>
+
+        <!-- SUBVIEW 3: CONFIGURATION -->
+        <div id="dirSubViewConfig" class="dir-subview" style="display: none;">
+          <div class="glass-card config-card">
+            <h3>Domain Controller & LDAP/LDAPS Einstellungen</h3>
+            <p class="config-desc">Konfiguriere die Anbindung an Windows Server Active Directory oder Samba 4 AD DC.</p>
+            
+            <form id="adConfigForm">
+              <div class="form-row">
+                <div class="form-group flex-2">
+                  <label for="cfgHost">Domain Controller Hostname oder IP *</label>
+                  <input type="text" id="cfgHost" required placeholder="z. B. dc01.corp.local oder 192.168.1.10" />
+                </div>
+                <div class="form-group flex-1">
+                  <label for="cfgPort">Port *</label>
+                  <input type="number" id="cfgPort" required value="636" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="cfgBaseDN">Base DN *</label>
+                  <input type="text" id="cfgBaseDN" required placeholder="DC=corp,DC=local" />
+                </div>
+                <div class="form-group flex-1">
+                  <label for="cfgBindDN">Bind User DN (Service Account) *</label>
+                  <input type="text" id="cfgBindDN" required placeholder="CN=Argus Service,OU=ServiceAccounts,DC=corp,DC=local" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="cfgBindPassword">Bind Kennwort</label>
+                  <input type="password" id="cfgBindPassword" placeholder="••••••••" />
+                </div>
+                <div class="form-group flex-1">
+                  <label for="cfgUserContainer">Benutzer Container (OU)</label>
+                  <input type="text" id="cfgUserContainer" placeholder="OU=Users,DC=corp,DC=local" />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group flex-1">
+                  <label for="cfgGroupContainer">Gruppen Container (OU)</label>
+                  <input type="text" id="cfgGroupContainer" placeholder="OU=Groups,DC=corp,DC=local" />
+                </div>
+                <div class="form-group flex-1">
+                  <label>Sicherheit & Zertifikate</label>
+                  <div class="checkbox-row">
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="cfgUseTLS" checked />
+                      LDAPS (TLS Verschlüsselung)
+                    </label>
+                    <label class="checkbox-label">
+                      <input type="checkbox" id="cfgSkipVerify" checked />
+                      Selbstsignierte Zertifikate erlauben
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group demo-mode-box">
+                <label class="checkbox-label font-bold">
+                  <input type="checkbox" id="cfgDemoMode" checked />
+                  Demo / Mock-Modus aktivieren (Erlaubt risikofreies Testen ohne externen Domain Controller)
+                </label>
+                <small class="form-hint">Wenn aktiv, werden alle Operationen im schnellen In-Memory Mock ausgeführt und vollständig im kryptografischen SHA-256 Audit Trail protokolliert.</small>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="btn btn-secondary" id="btnTestConfigConn">
+                  <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                  Verbindung prüfen
+                </button>
+                <button type="submit" class="btn btn-primary" id="btnSaveConfig">
+                  Konfiguration speichern
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      <!-- ================= SECTION: HR & USER LIFECYCLE ================= -->
+      <section id="sectionLifecycle" class="tab-pane">
+        <div class="dashboard-header">
+          <div>
+            <h1 class="page-title">HR &amp; User Lifecycle Management</h1>
+            <p class="page-desc">Automatisierter Mitarbeiter-Lebenszyklus: Vorlagenbasiertes Onboarding, Rollenzuweisung, Abteilungstransfers &amp; revisionssichere Zero-Trust Deprovisionierung.</p>
+          </div>
+          <div class="dashboard-actions">
+            <button class="btn btn-primary" id="btnOpenOnboardModal">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+              Mitarbeiter Onboarden
+            </button>
+            <button class="btn btn-secondary" id="btnOpenOffboardModal">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="17" y1="11" x2="23" y2="11"></line></svg>
+              Offboarding ausführen
+            </button>
+            <button class="btn btn-ghost" id="btnRefreshLifecycle" title="Aktualisieren">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Lifecycle KPI Cards -->
+        <div class="lifecycle-stats-grid">
+          <div class="lc-stat-card">
+            <div class="lc-stat-icon purple">
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div class="stat-data">
+              <span class="stat-label">Pre-Boarding (Geplant)</span>
+              <div class="stat-val-group">
+                <span class="stat-number" id="statLcPreBoarding">0</span>
+                <span class="stat-subtext">Startet in Kürze</span>
+              </div>
+            </div>
+          </div>
+          <div class="lc-stat-card">
+            <div class="lc-stat-icon emerald">
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div class="stat-data">
+              <span class="stat-label">Aktiv Onboarded</span>
+              <div class="stat-val-group">
+                <span class="stat-number" id="statLcActive">0</span>
+                <span class="stat-subtext">IAM &amp; AD aktiv</span>
+              </div>
+            </div>
+          </div>
+          <div class="lc-stat-card">
+            <div class="lc-stat-icon amber">
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M16 3h5v5"></path><path d="M4 20L21 3"></path><path d="M21 16v5h-5"></path><path d="M15 15l6 6"></path><path d="M4 4l5 5"></path></svg>
+            </div>
+            <div class="stat-data">
+              <span class="stat-label">Rollenwechsel / Transfer</span>
+              <div class="stat-val-group">
+                <span class="stat-number" id="statLcTransferred">0</span>
+                <span class="stat-subtext">Abteilung gewechselt</span>
+              </div>
+            </div>
+          </div>
+          <div class="lc-stat-card">
+            <div class="lc-stat-icon slate">
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <div class="stat-data">
+              <span class="stat-label">Offboarded (Archiv)</span>
+              <div class="stat-val-group">
+                <span class="stat-number" id="statLcOffboarded">0</span>
+                <span class="stat-subtext">Zero-Trust gesperrt</span>
+              </div>
+            </div>
+          </div>
+          <div class="lc-stat-card">
+            <div class="lc-stat-icon rose">
+              <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+            </div>
+            <div class="stat-data">
+              <span class="stat-label">Offene Aufgaben</span>
+              <div class="stat-val-group">
+                <span class="stat-number text-warning" id="statLcOpenTasks">0</span>
+                <span class="stat-subtext">Checklisten-Punkte</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Stage Pipeline Banner -->
+        <div class="pipeline-banner">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold text-cyan tracking-wider">LIFECYCLE PIPELINE PHASEN</span>
+            <span class="text-xs text-dim">100% kryptografisch im SHA-256 Hash Chain versiegelt</span>
+          </div>
+          <div class="pipeline-steps">
+            <div class="pipeline-step">
+              <span class="step-num">1</span>
+              <span>HR-Vertragsdaten &amp; Vorlage</span>
+            </div>
+            <span class="step-arrow">&rarr;</span>
+            <div class="pipeline-step">
+              <span class="step-num">2</span>
+              <span>IAM &amp; AD Auto-Provisioning</span>
+            </div>
+            <span class="step-arrow">&rarr;</span>
+            <div class="pipeline-step">
+              <span class="step-num">3</span>
+              <span>AGDLP Rollen &amp; Shares</span>
+            </div>
+            <span class="step-arrow">&rarr;</span>
+            <div class="pipeline-step">
+              <span class="step-num">4</span>
+              <span>Willkommens-Paket &amp; Checkliste</span>
+            </div>
+            <span class="step-arrow">&rarr;</span>
+            <div class="pipeline-step">
+              <span class="step-num">5</span>
+              <span>Zero-Trust Deprovisionierung</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="glass-card filter-bar">
+          <div class="filter-input-group search-group">
+            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="searchLifecycleInput" placeholder="Mitarbeiter, SAM, E-Mail oder Position suchen..." />
+          </div>
+          <div class="filter-input-group">
+            <label for="filterLifecycleStage" class="text-dim text-xs">Phase:</label>
+            <select id="filterLifecycleStage">
+              <option value="all">Alle Phasen</option>
+              <option value="pre_boarding">Pre-Boarding</option>
+              <option value="onboarded">Onboarded / Aktiv</option>
+              <option value="transferred">Rollenwechsel / Transfer</option>
+              <option value="offboarded">Offboarded</option>
+            </select>
+          </div>
+          <div class="filter-input-group">
+            <label for="filterLifecycleDept" class="text-dim text-xs">Abteilung:</label>
+            <select id="filterLifecycleDept">
+              <option value="all">Alle Abteilungen</option>
+              <option value="Software Engineering">Software Engineering</option>
+              <option value="IT-Security">IT-Security</option>
+              <option value="Human Resources">Human Resources</option>
+              <option value="Finance">Finance / Finanzen</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Employees Table Card -->
+        <div class="glass-card table-card">
+          <div class="card-head">
+            <div class="card-head-title">
+              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              Mitarbeiter &amp; Lifecycle-Status
+            </div>
+            <span class="badge badge-cyan" id="lifecycleCountBadge">0 Mitarbeiter</span>
+          </div>
+          <div class="table-responsive">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Mitarbeiter</th>
+                  <th>AD-Konto (SAM)</th>
+                  <th>Abteilung &amp; Position</th>
+                  <th>Lifecycle-Phase</th>
+                  <th>Eintritt / Austritt</th>
+                  <th>Onboarding-Checkliste</th>
+                  <th>Zugewiesene Berechtigungen</th>
+                  <th style="text-align: right;">Aktionen</th>
+                </tr>
+              </thead>
+              <tbody id="lifecycleTableBody">
+                <tr><td colspan="8" class="text-center text-dim py-4">Lade Lifecycle-Mitarbeiter...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- Modal: Login Overlay -->
+  <div class="modal-backdrop" id="loginModal">
+    <div class="modal-card modal-auth">
+      <div class="modal-header">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">ARGUS</span>
+            <span class="brand-subtitle">ENTERPRISE IAM LOGIN</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Melden Sie sich an, um auf das Identitäts- und Audit-System zuzugreifen.</p>
+
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="loginUsername">Benutzername</label>
+            <input type="text" id="loginUsername" required placeholder="admin oder auditor" />
+          </div>
+          <div class="form-group">
+            <label for="loginPassword">Kennwort</label>
+            <input type="password" id="loginPassword" required placeholder="••••••••" />
+          </div>
+          <div class="form-error" id="loginErrorMsg" style="display: none;"></div>
+          <button type="submit" class="btn btn-primary btn-block" id="btnSubmitLogin">
+            Authentifizieren &rarr;
+          </button>
+        </form>
+
+        <div class="demo-accounts">
+          <span class="demo-title">Schnellstart Test-Accounts:</span>
+          <div class="demo-buttons">
+            <button class="btn btn-ghost btn-xs" id="demoAdminBtn">SuperAdmin (admin / admin123)</button>
+            <button class="btn btn-ghost btn-xs" id="demoAuditorBtn">Auditor (auditor / auditor123)</button>
+            <button class="btn btn-ghost btn-xs" id="demoManagerBtn">User-Mgr (sarah.connor / sarah123)</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Audit Diff & Inspector -->
+  <div class="modal-backdrop" id="diffModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <h3 class="modal-title" id="diffModalTitle">Audit-Eintrag Details</h3>
+          <span class="badge" id="diffModalActionBadge">user.update</span>
+        </div>
+        <button class="close-btn" id="closeDiffModalBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="audit-meta-grid" id="diffMetaGrid">
+          <!-- Injected via JS -->
+        </div>
+
+        <div class="cryptographic-box">
+          <div class="crypto-title">Kryptografische Hash-Verkettung (SHA-256)</div>
+          <div class="crypto-row">
+            <span class="crypto-label">Previous Hash:</span>
+            <code class="crypto-hash" id="diffPrevHash">...</code>
+          </div>
+          <div class="crypto-row">
+            <span class="crypto-label">Entry Hash:</span>
+            <code class="crypto-hash highlight" id="diffEntryHash">...</code>
+          </div>
+        </div>
+
+        <div class="diff-container">
+          <h4 class="diff-section-title">Zustands-Änderung (Vorher vs. Nachher)</h4>
+          <div class="diff-split">
+            <div class="diff-pane">
+              <div class="diff-pane-header bg-rose-muted">Vorheriger Zustand (Old Values)</div>
+              <pre class="code-block" id="diffOldValues">Keine vorherigen Werte</pre>
+            </div>
+            <div class="diff-pane">
+              <div class="diff-pane-header bg-emerald-muted">Neuer Zustand (New Values)</div>
+              <pre class="code-block" id="diffNewValues">...</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeDiffModalBottomBtn">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Chain Verification Results -->
+  <div class="modal-backdrop" id="verifyModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Kryptografischer Integritäts-Check</h3>
+        <button class="close-btn" id="closeVerifyModalBtn">&times;</button>
+      </div>
+      <div class="modal-body" id="verifyModalBody">
+        <!-- Verification spinner or report injected via JS -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="closeVerifyModalBottomBtn">Fertig</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create / Edit User -->
+  <div class="modal-backdrop" id="userFormModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="userFormTitle">Benutzer anlegen</h3>
+        <button class="close-btn" id="closeUserModalBtn">&times;</button>
+      </div>
+      <form id="userForm">
+        <div class="modal-body">
+          <input type="hidden" id="userFormId" />
+          <div class="form-group" id="userFormUsernameGroup">
+            <label for="formUsername">Benutzername *</label>
+            <input type="text" id="formUsername" required placeholder="z. B. max.mustermann" />
+          </div>
+          <div class="form-group">
+            <label for="formFullName">Vollständiger Name *</label>
+            <input type="text" id="formFullName" required placeholder="z. B. Max Mustermann" />
+          </div>
+          <div class="form-group">
+            <label for="formEmail">E-Mail Adresse *</label>
+            <input type="email" id="formEmail" required placeholder="max@unternehmen.de" />
+          </div>
+          <div class="form-group">
+            <label for="formPassword" id="formPasswordLabel">Kennwort *</label>
+            <input type="password" id="formPassword" placeholder="Mindestens 8 Zeichen" />
+            <small class="form-hint" id="formPasswordHint">Beim Bearbeiten leer lassen, um das bestehende Kennwort beizubehalten.</small>
+          </div>
+          <div class="form-group">
+            <label for="formStatus">Konto-Status</label>
+            <select id="formStatus">
+              <option value="active">Aktiv</option>
+              <option value="suspended">Gesperrt / Inaktiv</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Rollen zuweisen</label>
+            <div class="checkbox-group" id="formRolesCheckboxes">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+          <div class="form-error" id="userFormError" style="display: none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelUserModalBtn">Abbrechen</button>
+          <button type="submit" class="btn btn-primary" id="saveUserBtn">Speichern</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Create / Edit Role -->
+  <div class="modal-backdrop" id="roleFormModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title" id="roleFormTitle">Rolle erstellen</h3>
+        <button class="close-btn" id="closeRoleModalBtn">&times;</button>
+      </div>
+      <form id="roleForm">
+        <div class="modal-body">
+          <input type="hidden" id="roleFormId" />
+          <div class="form-group">
+            <label for="formRoleName">Rollenname *</label>
+            <input type="text" id="formRoleName" required placeholder="z. B. SecurityReviewer" />
+          </div>
+          <div class="form-group">
+            <label for="formRoleDesc">Beschreibung *</label>
+            <textarea id="formRoleDesc" rows="2" placeholder="Zweck und Berechtigungsumfang dieser Rolle..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Berechtigungen auswählen</label>
+            <div class="permissions-matrix" id="formRolePermissionsChecklist">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+          <div class="form-error" id="roleFormError" style="display: none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelRoleModalBtn">Abbrechen</button>
+          <button type="submit" class="btn btn-primary" id="saveRoleBtn">Rolle speichern</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Create AD User -->
+  <div class="modal-backdrop" id="adUserModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="adUserModalTitle">Neuer Active Directory Benutzer</h3>
+        <button class="close-btn" id="closeADUserModalBtn">&times;</button>
+      </div>
+      <form id="adUserForm">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="adFormSam">sAMAccountName (Anmeldename) *</label>
+              <input type="text" id="adFormSam" required placeholder="z. B. max.mustermann" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="adFormMail">E-Mail Adresse *</label>
+              <input type="email" id="adFormMail" required placeholder="m.mustermann@corp.local" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="adFormGiven">Vorname *</label>
+              <input type="text" id="adFormGiven" required placeholder="Max" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="adFormSurname">Nachname *</label>
+              <input type="text" id="adFormSurname" required placeholder="Mustermann" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="adFormDept">Abteilung</label>
+              <input type="text" id="adFormDept" placeholder="z. B. IT-Security" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="adFormTitle">Position / Titel</label>
+              <input type="text" id="adFormTitle" placeholder="z. B. Security Specialist" />
+            </div>
+          </div>
+          <div class="form-group" id="adFormPasswordGroup">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <label for="adFormPassword" style="margin-bottom: 0;">Initial-Kennwort *</label>
+              <button type="button" class="btn btn-ghost btn-xs text-cyan" id="btnGenCreateUserPwd">
+                <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                Zufallskennwort generieren
+              </button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="adFormPassword" placeholder="Mindestens 12 Zeichen (BSI/NIST)" style="flex: 1;" />
+              <button type="button" class="btn btn-secondary btn-sm" id="btnCopyCreateUserPwd" title="In Zwischenablage kopieren">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+            <div class="pwd-meter-track mt-1"><div class="pwd-meter-fill" id="pwdMeterFillCreateUser"></div></div>
+            <span class="text-xs text-dim" id="pwdRatingCreateUser">BSI TR-02102-1 Komplexitätsprüfung aktiv</span>
+          </div>
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="adFormEnabled" checked />
+              Konto sofort aktivieren (userAccountControl)
+            </label>
+          </div>
+          <div class="form-group">
+            <label>Globale Rollengruppen zuweisen (AGDLP: A &rarr; G)</label>
+            <div class="checkbox-group" id="adFormRoleGroupsChecklist">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+          <div class="form-error" id="adUserFormError" style="display: none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelADUserModalBtn">Abbrechen</button>
+          <button type="submit" class="btn btn-primary" id="saveADUserBtn">AD-Benutzer anlegen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Reset AD Password -->
+  <div class="modal-backdrop" id="adPasswordModal">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title">AD-Kennwort zurücksetzen</h3>
+        <button class="close-btn" id="closeADPasswordModalBtn">&times;</button>
+      </div>
+      <form id="adPasswordForm">
+        <div class="modal-body">
+          <input type="hidden" id="adPasswordSam" />
+          <p class="modal-desc" id="adPasswordModalDesc">Neues Kennwort für Benutzer festlegen und Konto entsperren.</p>
+          <div class="form-group">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <label for="adNewPassword" style="margin-bottom: 0;">Neues Kennwort *</label>
+              <button type="button" class="btn btn-ghost btn-xs text-cyan" id="btnGenResetPwd">
+                <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg>
+                Generieren
+              </button>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="adNewPassword" required placeholder="Mindestens 12 Zeichen" style="flex: 1;" />
+              <button type="button" class="btn btn-secondary btn-sm" id="btnCopyResetPwd" title="Kopieren">
+                <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+              </button>
+            </div>
+            <div class="pwd-meter-track mt-1"><div class="pwd-meter-fill" id="pwdMeterFillReset"></div></div>
+            <span class="text-xs text-dim" id="pwdRatingReset">Starkes Enterprise-Kennwort empfohlen</span>
+          </div>
+          <div class="form-error" id="adPasswordError" style="display: none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelADPasswordModalBtn">Abbrechen</button>
+          <button type="submit" class="btn btn-primary" id="saveADPasswordBtn">Kennwort setzen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Create AGDLP File Share Groups -->
+  <div class="modal-backdrop" id="adShareModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">Neue AGDLP-Dateifreigabe anlegen</h3>
+        <button class="close-btn" id="closeADShareModalBtn">&times;</button>
+      </div>
+      <form id="adShareForm">
+        <div class="modal-body">
+          <p class="modal-desc">
+            Erzeugt automatisch standardisierte Domain-Local Ressourcengruppen nach dem AGDLP-Schema (<code>DL_FS_&lt;Freigabe&gt;_&lt;Ordner&gt;_&lt;Recht&gt;</code>).
+          </p>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="adShareName">Freigabename *</label>
+              <input type="text" id="adShareName" required placeholder="z. B. Projekte oder Finanzen" />
+            </div>
+            <div class="form-group flex-1">
+              <label for="adFolderName">Ordnername *</label>
+              <input type="text" id="adFolderName" required placeholder="z. B. Argus oder Controlling" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="adShareDesc">Beschreibung</label>
+            <input type="text" id="adShareDesc" placeholder="z. B. Entwicklungsordner für Argus Team" />
+          </div>
+          <div class="form-group">
+            <label>Zu generierende Berechtigungsstufen:</label>
+            <div class="checkbox-row">
+              <label class="checkbox-label">
+                <input type="checkbox" id="adShareRO" checked />
+                Leserechte (<code>..._RO</code>)
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="adShareRW" checked />
+                Ändern/Schreiben (<code>..._RW</code>)
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="adShareFC" />
+                Vollzugriff (<code>..._FC</code>)
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Globale Rollengruppe direkt zuweisen (an <code>..._RW</code>):</label>
+            <div class="checkbox-group" id="adShareAssignRoleChecklist">
+              <!-- Injected via JS -->
+            </div>
+          </div>
+          <div class="preview-box">
+            <span class="preview-label">Namensvorschau:</span>
+            <code id="adSharePreviewName">DL_FS_Projekte_Argus_RO &bull; DL_FS_Projekte_Argus_RW</code>
+          </div>
+          <div class="form-error" id="adShareFormError" style="display: none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelADShareModalBtn">Abbrechen</button>
+          <button type="submit" class="btn btn-primary" id="saveADShareBtn">AGDLP-Gruppen generieren</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Assign Member to Group -->
+  <div class="modal-backdrop" id="adMemberModal">
+    <div class="modal-card modal-sm">
+      <div class="modal-header">
+        <h3 class="modal-title" id="adMemberModalTitle">Mitgliedschaft zuweisen</h3>
+        <button class="close-btn" id="closeADMemberModalBtn">&times;</button>
+      </div>
+      <form id="adMemberForm">
+        <div class="modal-body">
+          <input type="hidden" id="adMemberGroupName" />
+          <p class="modal-desc" id="adMemberModalDesc">Zielgruppe: <code>...</code></p>
+          <div class="form-group">
+            <label for="adMemberSelect">Mitglied auswählen (Benutzer oder globale Gruppe) *</label>
+            <select id="adMemberSelect" required>
+              <!-- Injected via JS -->
+            </select>
+          </div>
+          <div class="form-error" id="adMemberFormError" style="display: none;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" id="cancelADMemberModalBtn">Abbrechen</button>
+          <button type="submit" class="btn btn-primary" id="saveADMemberBtn">Zuweisen &amp; Versiegeln</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: ACL Provisioning Scripts (PowerShell & Bash) -->
+  <div class="modal-backdrop" id="aclScriptModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="aclScriptTitle">ACL Bereitstellungs-Skript</h3>
+          <span class="text-dim text-xs" id="aclScriptSubtitle">Dateiserver Provisionierung</span>
+        </div>
+        <button class="close-btn" id="closeACLScriptBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="script-tabs-bar">
+          <button class="btn btn-secondary btn-sm active" id="btnTabScriptPS">PowerShell (icacls)</button>
+          <button class="btn btn-secondary btn-sm" id="btnTabScriptBash">Linux / Samba (setfacl)</button>
+          <button class="btn btn-primary btn-sm ml-auto" id="btnCopyScript">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+            In Zwischenablage kopieren
+          </button>
+        </div>
+        <div class="script-editor-container">
+          <pre class="code-block script-block" id="scriptContentBox"></pre>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeACLScriptBottomBtn">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Effective Permissions -->
+  <div class="modal-backdrop" id="effectivePermsModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="effectivePermsTitle">Effektive Berechtigungen</h3>
+          <span class="text-dim text-xs" id="effectivePermsSubtitle">Rekursive Vererbungs-Auflösung (A &rarr; G &rarr; DL &rarr; P)</span>
+        </div>
+        <button class="close-btn" id="closeEffectivePermsBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Freigabe &amp; Pfad</th>
+                <th>Berechtigungsstufe</th>
+                <th>Vererbt über (Globale Gruppe)</th>
+                <th>Ressourcengruppe (DL_FS_*)</th>
+              </tr>
+            </thead>
+            <tbody id="effectivePermsTableBody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeEffectivePermsBottomBtn">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: User Compare (Diff) -->
+  <div class="modal-backdrop" id="userCompareModal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3 class="modal-title">Benutzer- &amp; Rechtevergleich</h3>
+        <button class="close-btn" id="closeUserCompareBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row compare-select-row">
+          <div class="form-group flex-1">
+            <label for="compareSelectA">Benutzer A</label>
+            <select id="compareSelectA"></select>
+          </div>
+          <div class="form-group flex-1">
+            <label for="compareSelectB">Benutzer B</label>
+            <select id="compareSelectB"></select>
+          </div>
+        </div>
+        <div id="compareResultContainer">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeUserCompareBottomBtn">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Command Palette (Ctrl + K) -->
+  <div class="modal-backdrop" id="cmdPaletteModal">
+    <div class="modal-card modal-palette">
+      <div class="palette-search-box">
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="cmdPaletteInput" placeholder="Befehl, Benutzer, Gruppe oder Freigabe suchen..." autocomplete="off" />
+        <kbd>ESC</kbd>
+      </div>
+      <div class="palette-results-list" id="cmdPaletteResults">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: CSV Bulk Import -->
+  <div class="modal-backdrop" id="modalBulkImport">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">CSV-Massenimport &amp; Bulk-Onboarding</h3>
+          <span class="text-dim text-xs">Mehrere AD-Mitarbeiter und globale Rollenzuweisungen auf einmal anlegen</span>
+        </div>
+        <button class="close-btn" id="closeBulkImportBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="bulk-toolbar">
+          <button class="btn btn-secondary btn-sm" id="btnDownloadSampleCSV">
+            <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Beispiel-CSV Vorlage herunterladen
+          </button>
+          <span class="text-dim text-xs">Erforderlich: <code>sAMAccountName, GivenName, Surname</code>. Optional: <code>Email, Department, JobTitle, GlobalGroups</code></span>
+        </div>
+
+        <div class="form-group mt-3">
+          <label>CSV-Daten eingeben oder Datei hochladen</label>
+          <div class="dropzone" id="bulkDropzone">
+            <svg viewBox="0 0 24 24" width="32" height="32" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <p>CSV-Datei hierher ziehen oder <span class="text-cyan underline cursor-pointer" id="btnBrowseCSV">Datei auswählen</span></p>
+            <input type="file" id="bulkFileInput" accept=".csv,text/csv" style="display: none;" />
+          </div>
+          <textarea id="bulkCSVTextarea" class="code-editor mt-2" rows="6" placeholder="sAMAccountName,GivenName,Surname,Email,Department,JobTitle,Password,GlobalGroups&#10;m.muster,Max,Muster,m.muster@corp.local,Finanzen,Controller,,G_Finanzen_Mitarbeiter"></textarea>
+        </div>
+
+        <div id="bulkResultContainer" class="mt-3" style="display: none;">
+          <h4 class="text-sm font-semibold mb-2" id="bulkResultTitle">Import-Ergebnis</h4>
+          <div class="table-container max-h-60 overflow-y-auto">
+            <table class="data-table text-xs" id="bulkResultTable">
+              <thead>
+                <tr>
+                  <th>Zeile</th>
+                  <th>sAMAccountName</th>
+                  <th>Name</th>
+                  <th>Abteilung</th>
+                  <th>Rollen</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="bulkResultTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeBulkImportBottomBtn">Schließen</button>
+        <button class="btn btn-primary" id="btnExecuteBulkImport">Massenimport ausführen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Just-In-Time (JIT) Temporary Memberships -->
+  <div class="modal-backdrop" id="modalJIT">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Just-In-Time (JIT) Befristete Berechtigungen</h3>
+          <span class="text-dim text-xs">Zeitgesteuerter AGDLP-Zugriff mit automatischer Revocation nach Ablauf</span>
+        </div>
+        <button class="close-btn" id="closeJITBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="jitForm" class="glass-card p-3 mb-4">
+          <h4 class="text-sm font-semibold mb-3">Neues JIT-Zeitfenster gewähren</h4>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="jitUserSelect">AD-Benutzer *</label>
+              <select id="jitUserSelect" required></select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="jitGroupSelect">Zielgruppe (DL_FS_* oder G_*) *</label>
+              <select id="jitGroupSelect" required></select>
+            </div>
+            <div class="form-group" style="width: 140px;">
+              <label for="jitDurationSelect">Gültigkeitsdauer *</label>
+              <select id="jitDurationSelect" required>
+                <option value="1">1 Stunde</option>
+                <option value="4" selected>4 Stunden</option>
+                <option value="8">8 Stunden (Arbeitstag)</option>
+                <option value="24">24 Stunden (1 Tag)</option>
+                <option value="72">72 Stunden (3 Tage)</option>
+                <option value="168">7 Tage (1 Woche)</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="jitReasonInput">Begründung &amp; Incident / Ticket-ID *</label>
+              <input type="text" id="jitReasonInput" placeholder="z. B. INC-9412: Notfall-Audit Rechnungsarchiv" required />
+            </div>
+            <div class="form-group align-self-end">
+              <button type="submit" class="btn btn-primary" id="btnSubmitJIT">JIT-Zugriff aktivieren</button>
+            </div>
+          </div>
+        </form>
+
+        <h4 class="text-sm font-semibold mb-2">Aktive befristete Berechtigungen</h4>
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Benutzer</th>
+                <th>Gruppe</th>
+                <th>Angefordert von</th>
+                <th>Begründung</th>
+                <th>Gültig bis</th>
+                <th>Status</th>
+                <th class="text-right">Aktion</th>
+              </tr>
+            </thead>
+            <tbody id="jitTableBody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeJITBottomBtn">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Dual-Control Approvals (Vier-Augen-Prinzip) -->
+  <div class="modal-backdrop" id="modalApprovals">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Vier-Augen-Prinzip &amp; Genehmigungen</h3>
+          <span class="text-dim text-xs">Dual-Control Workflow für privilegierte Domänenrechte &amp; sensitive Ressourcen</span>
+        </div>
+        <button class="close-btn" id="closeApprovalsBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="tabs-subnav mb-3">
+          <button class="btn btn-secondary btn-sm active" id="btnFilterApprovalsPending">Ausstehend</button>
+          <button class="btn btn-secondary btn-sm" id="btnFilterApprovalsAll">Alle Anträge</button>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Aktion &amp; Ressource</th>
+                <th>Antragsteller</th>
+                <th>Begründung</th>
+                <th>Eingereicht am</th>
+                <th>Status</th>
+                <th class="text-right">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="approvalsTableBody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeApprovalsBottomBtn">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Share Templates Wizard -->
+  <div class="modal-backdrop" id="modalTemplates">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">AGDLP Vorlagen-Assistent</h3>
+          <span class="text-dim text-xs">Standardisierte Best-Practice Ordner- und Rechtestrukturen auf Knopfdruck ausrollen</span>
+        </div>
+        <button class="close-btn" id="closeTemplatesBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="template-grid mb-4" id="templateCardsContainer">
+          <!-- Injected via JS -->
+        </div>
+
+        <div class="glass-card p-3">
+          <h4 class="text-sm font-semibold mb-2">Bereitstellungsparameter</h4>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="templateShareNameInput">Name der Dateifreigabe *</label>
+              <input type="text" id="templateShareNameInput" placeholder="z. B. Marketing, Projekte, Controlling" required />
+            </div>
+            <div class="form-group flex-1">
+              <label for="templateDeptInput">Zuständige Abteilung (für automatische G_* Rollenzuweisung)</label>
+              <input type="text" id="templateDeptInput" placeholder="z. B. Marketing, IT, Finanzen" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeTemplatesBottomBtn">Abbrechen</button>
+        <button class="btn btn-primary" id="btnApplySelectedTemplate">Vorlage anwenden &amp; AGDLP erzeugen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Compliance & ISO 27001 Report -->
+  <div class="modal-backdrop" id="modalCompliance">
+    <div class="modal-card modal-xl">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">ISO 27001 / DSGVO Compliance-Bericht</h3>
+          <span class="text-dim text-xs">Revisionssicherer Prüfnachweis mit SHA-256 Kettensiegel</span>
+        </div>
+        <button class="close-btn" id="closeComplianceBtn">&times;</button>
+      </div>
+      <div class="modal-body" id="complianceModalBody">
+        <div class="compliance-header-seal mb-3">
+          <div class="hash-box">
+            <strong>Kryptografischer Hash-Anker (Audit Chain Head):</strong><br>
+            <code id="complianceHeadHash">...</code>
+          </div>
+          <div class="compliance-actions-bar">
+            <button class="btn btn-secondary btn-sm" id="btnDownloadComplianceCSV">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+              CSV-Export
+            </button>
+            <button class="btn btn-primary btn-sm" id="btnPrintComplianceCert">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              Drucken / PDF-Zertifikat
+            </button>
+          </div>
+        </div>
+
+        <div class="stats-grid mb-4" id="complianceKpiGrid">
+          <!-- Injected via JS -->
+        </div>
+
+        <h4 class="text-sm font-semibold mb-2">AGDLP Freigaben- &amp; Zugriffsmatrix</h4>
+        <div class="table-container mb-4 max-h-64 overflow-y-auto">
+          <table class="data-table text-xs">
+            <thead>
+              <tr>
+                <th>Freigabe</th>
+                <th>Ordner</th>
+                <th>Recht</th>
+                <th>Ressourcengruppe (DL)</th>
+                <th>Zugeordnete Rollen (G)</th>
+                <th>Mitglieder</th>
+              </tr>
+            </thead>
+            <tbody id="complianceSharesTableBody"></tbody>
+          </table>
+        </div>
+
+        <h4 class="text-sm font-semibold mb-2">Konflikte &amp; Sicherheits-Anomalien</h4>
+        <div class="table-container max-h-48 overflow-y-auto">
+          <table class="data-table text-xs">
+            <thead>
+              <tr>
+                <th>Schweregrad</th>
+                <th>Betroffenes Objekt</th>
+                <th>Befund</th>
+                <th>Empfohlene Maßnahme</th>
+              </tr>
+            </thead>
+            <tbody id="complianceConflictsTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeComplianceBottomBtn">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Interactive AGDLP Visual Graph -->
+  <div class="modal-backdrop" id="modalAGDLPGraph">
+    <div class="modal-card modal-xl">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Interaktiver AGDLP Berechtigungsgraph</h3>
+          <span class="text-dim text-xs">Vollständige Abstammungs- und Vererbungslinie (A &rarr; G &rarr; DL &rarr; P)</span>
+        </div>
+        <button class="close-btn" id="closeAGDLPGraphBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="graph-toolbar mb-2">
+          <div class="graph-legend">
+            <span class="legend-dot dot-user"></span> Account (A)
+            <span class="legend-dot dot-global ml-2"></span> Globale Gruppe (G)
+            <span class="legend-dot dot-dl ml-2"></span> Domain Local (DL)
+            <span class="legend-dot dot-share ml-2"></span> Freigabe / Recht (P)
+          </div>
+          <span class="text-dim text-xs">Klicke auf einen Knoten, um den gesamten Zugriffspfad hervorzuheben</span>
+        </div>
+        <div class="graph-canvas-container" id="agdlpGraphContainer">
+          <!-- Interactive SVG Diagram injected via JS -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeAGDLPGraphBottomBtn">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Onboarding (HR Lifecycle) -->
+  <div class="modal-backdrop" id="modalOnboard">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Mitarbeiter Onboarding (Automatisiert)</h3>
+          <span class="text-dim text-xs">Vollautomatisierte Provisionierung in IAM, Active Directory und AGDLP-Freigaben</span>
+        </div>
+        <button class="close-btn" id="closeOnboardBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formOnboardEmployee">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="onboardGivenName">Vorname *</label>
+              <input type="text" id="onboardGivenName" placeholder="z. B. Julia" required />
+            </div>
+            <div class="form-group flex-1">
+              <label for="onboardSurname">Nachname *</label>
+              <input type="text" id="onboardSurname" placeholder="z. B. Weber" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="onboardDept">Abteilung *</label>
+              <select id="onboardDept" required>
+                <option value="Software Engineering">Software Engineering &amp; IT</option>
+                <option value="IT-Security">IT-Security &amp; Compliance</option>
+                <option value="Human Resources">Human Resources &amp; Personal</option>
+                <option value="Finance">Finanzen &amp; Controlling</option>
+                <option value="Sales">Vertrieb &amp; Kundenbetreuung</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="onboardJobTitle">Position / Job-Titel *</label>
+              <input type="text" id="onboardJobTitle" placeholder="z. B. Cloud Security Engineer" required />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="onboardStartDate">Eintrittsdatum *</label>
+              <input type="date" id="onboardStartDate" required />
+            </div>
+            <div class="form-group flex-1">
+              <label for="onboardManager">Führungskraft / Mentor</label>
+              <input type="text" id="onboardManager" placeholder="z. B. Sarah Connor" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="onboardPreset">Berechtigungsprofil &amp; Vorlage *</label>
+            <select id="onboardPreset">
+              <option value="it_dev">IT &amp; Software Engineering (Rolle: UserManager, AD: G_DEV_Argus, Freigabe: Projekte RW)</option>
+              <option value="security">IT-Security &amp; Audit (Rolle: SecurityAuditor, AD: G_IT_Security, Freigabe: Audit/Personal FC)</option>
+              <option value="hr_manager">Human Resources (Rolle: UserManager, AD: G_HR_Mitarbeiter, Freigabe: Personal Verträge)</option>
+              <option value="finance">Finanzen &amp; Buchhaltung (Rolle: AuditorGuest, AD: G_FIN_Buchhaltung, Freigabe: Finanzen RW)</option>
+              <option value="general">Standard Mitarbeiter (Rolle: AuditorGuest, AD: Standard, Freigabe: Projekte RO)</option>
+            </select>
+            <small class="form-hint">Legt fest, welche globalen Gruppen und Dateifreigabegruppen der Nutzer automatisch erhält.</small>
+          </div>
+
+          <div class="form-group">
+            <label class="text-sm font-semibold mb-2 block">Automatisierungs-Aktionen</label>
+            <div class="security-checklist">
+              <label class="check-item active">
+                <input type="checkbox" id="onboardAutoIAM" checked />
+                <span>IAM-Konto synchron im Argus Identity Management anlegen</span>
+              </label>
+              <label class="check-item active">
+                <input type="checkbox" id="onboardAutoAD" checked />
+                <span>Active Directory / Samba-AD Konto mit UPN und Sicherheitsgruppen anlegen</span>
+              </label>
+              <label class="check-item active">
+                <input type="checkbox" id="onboardAutoAGDLP" checked />
+                <span>AGDLP-Dateifreigabeberechtigungen anhand der Abteilung automatisch zuweisen</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="onboardNotes">Notizen / Bemerkungen</label>
+            <textarea id="onboardNotes" rows="2" placeholder="Optionale Hinweise zum Onboarding..."></textarea>
+          </div>
+
+          <div class="form-actions mt-4">
+            <button type="button" class="btn btn-secondary" id="cancelOnboardBtn">Abbrechen</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitOnboard">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Onboarding jetzt ausführen
+            </button>
+          </div>
+        </form>
+
+        <!-- Success Credential View -->
+        <div id="onboardSuccessCard" style="display: none;">
+          <div class="compliance-banner mb-3">
+            <div class="compliance-icon">
+              <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div>
+              <div class="compliance-title">Mitarbeiter erfolgreich automatisiert onboarded!</div>
+              <div class="compliance-desc">Das Konto wurde in IAM und Active Directory angelegt und im kryptografischen SHA-256 Audit Trail versiegelt.</div>
+            </div>
+          </div>
+
+          <div class="credential-package-card">
+            <h4 class="text-sm font-semibold">Willkommens-Zugangsdaten</h4>
+            <div class="cred-row">
+              <span class="text-dim">Mitarbeiter:</span>
+              <span class="font-semibold text-main" id="succEmpName">-</span>
+            </div>
+            <div class="cred-row">
+              <span class="text-dim">Benutzername / SAMAccount:</span>
+              <span class="cred-val" id="succEmpSAM">-</span>
+            </div>
+            <div class="cred-row">
+              <span class="text-dim">E-Mail-Adresse:</span>
+              <span class="font-mono text-cyan" id="succEmpMail">-</span>
+            </div>
+            <div class="cred-row">
+              <span class="text-dim">Initiales Kennwort (Einmal-Passwort):</span>
+              <div class="flex items-center gap-2">
+                <span class="cred-val" id="succEmpPwd">-</span>
+                <button class="btn btn-secondary btn-xs" id="btnCopyTempPwd" title="Kennwort kopieren">Kopieren</button>
+              </div>
+            </div>
+            <div class="cred-row">
+              <span class="text-dim">Zugewiesene Berechtigungen:</span>
+              <span class="text-emerald font-semibold" id="succEmpPerms">-</span>
+            </div>
+          </div>
+
+          <div class="form-actions mt-4">
+            <button type="button" class="btn btn-primary" id="btnCloseOnboardSuccess">Fertigstellen &amp; Schließen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Offboarding (Zero-Trust Deprovisioning) -->
+  <div class="modal-backdrop" id="modalOffboard">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title text-rose">Zero-Trust Mitarbeiter Offboarding</h3>
+          <span class="text-dim text-xs">Vollständiger Entzug aller Berechtigungen &amp; revisionssichere Deprovisionierung</span>
+        </div>
+        <button class="close-btn" id="closeOffboardBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formOffboardEmployee">
+          <div class="form-group">
+            <label for="offboardSelectEmployee">Ausscheidender Mitarbeiter *</label>
+            <select id="offboardSelectEmployee" required>
+              <option value="">-- Mitarbeiter auswählen --</option>
+            </select>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="offboardReason">Austrittsgrund *</label>
+              <select id="offboardReason" required>
+                <option value="Eigenkündigung Mitarbeiter">Eigenkündigung Mitarbeiter</option>
+                <option value="Kündigung durch Arbeitgeber">Kündigung durch Arbeitgeber</option>
+                <option value="Befristeter Vertrag beendet">Befristeter Vertrag beendet</option>
+                <option value="Projektphase abgeschlossen">Projektphase abgeschlossen</option>
+                <option value="Ruhestand / Pensionierung">Ruhestand / Pensionierung</option>
+                <option value="Aufhebungsvertrag">Aufhebungsvertrag</option>
+              </select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="offboardEffectiveDate">Austrittsdatum (Stichtag) *</label>
+              <input type="date" id="offboardEffectiveDate" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="text-sm font-semibold mb-2 block">Zero-Trust Deprovisionierungs-Schritte</label>
+            <div class="security-checklist">
+              <label class="check-item active">
+                <input type="checkbox" id="offboardLockAccount" checked />
+                <span>Konto sofort im Domain Controller sperren (UAC 0x0202) &amp; IAM-Status auf 'suspended'</span>
+              </label>
+              <label class="check-item active">
+                <input type="checkbox" id="offboardRevokeGroups" checked />
+                <span>Atomarer Entzug aller globalen und lokalen AGDLP-Sicherheitsgruppen (Zero Remaining Access)</span>
+              </label>
+              <label class="check-item active">
+                <input type="checkbox" id="offboardKillSessions" checked />
+                <span>Alle aktiven Anmeldesitzungen und Tokens sofort invalidieren</span>
+              </label>
+              <label class="check-item active">
+                <input type="checkbox" id="offboardArchiveData" checked />
+                <span>Postfach- und Datensicherungsflag zur DSGVO-Archivierung setzen</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="offboardNotes">Übergabe- &amp; Austrittsprotokoll (Notizen)</label>
+            <textarea id="offboardNotes" rows="2" placeholder="z. B. Notebook und Zutrittsausweis am Empfang abgegeben..."></textarea>
+          </div>
+
+          <div class="p-3 bg-rose-50 border border-rose-200 rounded mb-3 text-xs text-rose" style="background: rgba(244, 63, 94, 0.08); border: 1px solid rgba(244, 63, 94, 0.3); border-radius: 6px; padding: 0.75rem;">
+            <strong>Compliance-Garantie:</strong> Diese Aktion entzieht dem Mitarbeiter sämtliche Dateifreigaben und Systemzugänge. Die Aktion wird als kryptografischer Block im SHA-256 Audit Trail versiegelt.
+          </div>
+
+          <div class="form-actions mt-4">
+            <button type="button" class="btn btn-secondary" id="cancelOffboardBtn">Abbrechen</button>
+            <button type="submit" class="btn btn-accent" id="btnSubmitOffboard" style="background: linear-gradient(135deg, #e11d48, #be123c);">
+              <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+              Offboarding unwiderruflich ausführen
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Employee Lifecycle Details & Checklist -->
+  <div class="modal-backdrop" id="modalLifecycleDetails">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title" id="lcDetailName">Mitarbeiter-Akte</h3>
+          <span class="text-dim text-xs" id="lcDetailSubtitle">Lebenszyklus, Zugriffsstatus &amp; Onboarding-Aufgaben</span>
+        </div>
+        <button class="close-btn" id="closeLifecycleDetailsBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="grid grid-cols-2 gap-3 mb-4" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+          <div class="p-3 border rounded" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+            <div class="text-xs text-dim mb-1">Mitarbeiter &amp; Abteilung</div>
+            <div class="font-bold text-main" id="lcDetailFullName">-</div>
+            <div class="text-xs text-muted" id="lcDetailDeptTitle">-</div>
+            <div class="font-mono text-xs text-cyan mt-1" id="lcDetailEmail">-</div>
+          </div>
+          <div class="p-3 border rounded" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;">
+            <div class="text-xs text-dim mb-1">Status &amp; Termine</div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="badge" id="lcDetailStageBadge">-</span>
+              <span class="badge" id="lcDetailEnabledBadge">-</span>
+            </div>
+            <div class="text-xs text-muted" id="lcDetailDates">Eintritt: -</div>
+            <div class="text-xs text-muted" id="lcDetailManager">Führungskraft: -</div>
+          </div>
+        </div>
+
+        <h4 class="text-sm font-semibold mb-2">Zugewiesene Rollen &amp; AGDLP-Sicherheitsgruppen</h4>
+        <div class="p-3 mb-4 border rounded" style="background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.85rem;" id="lcDetailGroupsContainer">
+          <!-- Injected via JS -->
+        </div>
+
+        <h4 class="text-sm font-semibold mb-2">Onboarding &amp; Compliance Checkliste</h4>
+        <div class="checklist-tasks-list" id="lcDetailChecklist">
+          <!-- Injected via JS -->
+        </div>
+
+        <div id="lcDetailNotesBox" class="mt-3 p-3 border rounded text-xs" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; display: none;">
+          <div class="font-semibold text-dim mb-1">Notizen &amp; Protokoll:</div>
+          <div id="lcDetailNotesText" class="text-muted"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary btn-sm" id="btnTransferFromDetails">Rollenwechsel / Transfer</button>
+        <button class="btn btn-accent btn-sm" id="btnOffboardFromDetails" style="background: #e11d48;">Offboarding starten</button>
+        <button class="btn btn-secondary btn-sm" id="closeLifecycleDetailsBottomBtn">Schließen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Department Transfer / Role Transition -->
+  <div class="modal-backdrop" id="modalTransfer">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h3 class="modal-title">Abteilungstransfer &amp; Rollenanpassung</h3>
+          <span class="text-dim text-xs">Übertrage Mitarbeiter in ein neues Team mit automatischer Rechteanpassung</span>
+        </div>
+        <button class="close-btn" id="closeTransferBtn">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="formTransferEmployee">
+          <input type="hidden" id="transferSAM" />
+          <div class="p-3 mb-3 border rounded text-xs" style="background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 6px;">
+            Mitarbeiter: <strong id="transferEmpLabel" class="text-main">-</strong>
+          </div>
+
+          <div class="form-group">
+            <label for="transferNewDept">Neue Abteilung *</label>
+            <select id="transferNewDept" required>
+              <option value="Software Engineering">Software Engineering &amp; IT</option>
+              <option value="IT-Security">IT-Security &amp; Compliance</option>
+              <option value="Human Resources">Human Resources &amp; Personal</option>
+              <option value="Finance">Finanzen &amp; Controlling</option>
+              <option value="Sales">Vertrieb &amp; Kundenbetreuung</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="transferNewTitle">Neuer Job-Titel *</label>
+            <input type="text" id="transferNewTitle" placeholder="z. B. Senior IT Auditor" required />
+          </div>
+
+          <div class="form-group">
+            <label for="transferNewPreset">Neues Berechtigungsprofil *</label>
+            <select id="transferNewPreset">
+              <option value="it_dev">IT &amp; Software Engineering (G_DEV_Argus, Freigabe Projekte RW)</option>
+              <option value="security">IT-Security &amp; Audit (G_IT_Security, Freigabe Audit FC)</option>
+              <option value="hr_manager">Human Resources (G_HR_Mitarbeiter, Freigabe Personal)</option>
+              <option value="finance">Finanzen &amp; Buchhaltung (G_FIN_Buchhaltung, Freigabe Finanzen RW)</option>
+              <option value="general">Standard Mitarbeiter (Standard-Freigaben)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="transferReason">Begründung für Wechsel *</label>
+            <input type="text" id="transferReason" placeholder="z. B. Beförderung / Interner Teamwechsel" required />
+          </div>
+
+          <div class="form-actions mt-4">
+            <button type="button" class="btn btn-secondary" id="cancelTransferBtn">Abbrechen</button>
+            <button type="submit" class="btn btn-primary" id="btnSubmitTransfer">Transfer durchführen</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
